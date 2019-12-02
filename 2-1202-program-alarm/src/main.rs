@@ -95,11 +95,11 @@ mod tests {
     }
 }
 
-fn fix_program(instructions: &Vec<i32>) -> Vec<i32> {
+fn fix_program(instructions: &Vec<i32>, noun: i32, verb: i32) -> Vec<i32> {
     let mut fixed_instructions = instructions.to_vec(); // Copy the vector
 
-    fixed_instructions[1] = 12;
-    fixed_instructions[2] = 2;
+    fixed_instructions[1] = noun;
+    fixed_instructions[2] = verb;
 
     return fixed_instructions;
 }
@@ -119,10 +119,31 @@ fn main() {
     let instructions: Vec<i32> = numbers.into_iter().map(Result::unwrap).collect();
 
     println!("Fixing the 1202 program...");
-    let fixed_instructions = fix_program(&instructions);
+    let fixed_instructions = fix_program(&instructions, 12, 2);
 
     println!("Computing the 1202 program...");
     let result = compute_program(&fixed_instructions);
 
     println!("PART 1: The value left at position 0 is: {}", result[0]);
+
+    println!("Brute-forcing noun & verb in order to find the right progam inputs...");
+
+    for noun in 0..100 {
+        for verb in 0..100 {
+            let fixed_instructions = fix_program(&instructions, noun, verb);
+            let result = compute_program(&fixed_instructions);
+
+            if result[0] == 19690720 {
+                println!(
+                    "PART 2: For noun={} and verb={}, the result of 100 * noun + verb is {}",
+                    noun,
+                    verb,
+                    100 * noun + verb
+                );
+                return;
+            }
+        }
+    }
+
+    panic!("Unable to found a noun and verb corresponding.");
 }
